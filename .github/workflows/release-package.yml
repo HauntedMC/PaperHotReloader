@@ -10,9 +10,6 @@ jobs:
     runs-on: ubuntu-24.04
     permissions:
       contents: write
-    env:
-      PHR_ACCEPTANCE_WORK_DIRECTORY: ${{ runner.temp }}/paperhotreloader-platform-acceptance
-      PHR_ACCEPTANCE_KEEP_WORK_DIRECTORY: "true"
 
     steps:
       - name: Checkout
@@ -31,6 +28,9 @@ jobs:
         uses: gradle/actions/setup-gradle@v6.3.0
 
       - name: Run release verification
+        env:
+          PHR_ACCEPTANCE_WORK_DIRECTORY: ${{ runner.temp }}/paperhotreloader-platform-acceptance
+          PHR_ACCEPTANCE_KEEP_WORK_DIRECTORY: "true"
         run: ./gradlew --no-daemon clean test acceptanceTest
 
       - name: Resolve distribution artifact
