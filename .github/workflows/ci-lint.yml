@@ -1,0 +1,33 @@
+name: CI Lint
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+  push:
+    branches: [main]
+
+jobs:
+  lint:
+    name: Build Hygiene
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Set up JDK 25
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: "25"
+          cache: gradle
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v6.2.0
+
+      - name: Verify build hygiene
+        run: |
+          ./gradlew --no-daemon check
+          bash -n src/acceptance/run-acceptance.sh

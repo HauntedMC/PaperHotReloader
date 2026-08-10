@@ -1,0 +1,5 @@
+name: PhrAcceptanceConsumer
+version: '1.0'
+main: acceptance.AcceptancePlugin
+api-version: '26.2'
+depend: [PhrAcceptanceSample]

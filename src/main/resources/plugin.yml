@@ -1,0 +1,27 @@
+name: PaperHotReloader
+version: '${version}'
+main: nl.hauntedmc.paperhotreloader.PaperHotReloader
+api-version: '1.21'
+authors: [remymine]
+website: https://www.hauntedmc.nl
+description: Hot-load, unload, reload, and watch Bukkit plugins.
+commands:
+  paperhotreloader:
+    description: Manage Bukkit plugin lifecycles.
+    aliases: [phr]
+    usage: /<command> help
+permissions:
+  paperhotreloader.*:
+    description: Grants all PaperHotReloader permissions.
+    default: op
+    children:
+      paperhotreloader.help: true
+      paperhotreloader.reload: true
+      paperhotreloader.restart: true
+      paperhotreloader.loadplugin: true
+      paperhotreloader.unloadplugin: true
+      paperhotreloader.reloadplugin: true
+      paperhotreloader.watchplugin: true
+      paperhotreloader.plugininfo: true
+      paperhotreloader.commandinfo: true
+      paperhotreloader.plugins: true

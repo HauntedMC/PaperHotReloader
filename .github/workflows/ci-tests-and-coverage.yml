@@ -1,0 +1,82 @@
+name: CI Tests and Coverage
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+  push:
+    branches: [main]
+
+jobs:
+  tests:
+    name: Tests and Coverage
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Set up JDK 25
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: "25"
+          cache: gradle
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v6.2.0
+
+      - name: Run tests and generate coverage report
+        run: ./gradlew --no-daemon test jacocoTestReport
+
+      - name: Upload test report
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: test-report
+          if-no-files-found: warn
+          path: build/reports/tests/test
+
+      - name: Upload JaCoCo report
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: jacoco-report
+          if-no-files-found: warn
+          path: build/reports/jacoco/test
+
+  platform-acceptance:
+    name: Paper Platform Acceptance
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Set up JDK 25
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: "25"
+          cache: gradle
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v6.2.0
+
+      - name: Run Paper acceptance
+        env:
+          PHR_ACCEPTANCE_WORK_DIRECTORY: ${{ runner.temp }}/paperhotreloader-platform-acceptance
+          PHR_ACCEPTANCE_KEEP_WORK_DIRECTORY: "true"
+        run: ./gradlew --no-daemon acceptanceTest
+
+      - name: Upload Paper acceptance logs
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: paperhotreloader-platform-acceptance-logs
+          if-no-files-found: warn
+          path: ${{ runner.temp }}/paperhotreloader-platform-acceptance/paper/paper.log

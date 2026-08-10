@@ -1,0 +1,67 @@
+name: Release Package
+
+on:
+  push:
+    tags: ["v*"]
+
+jobs:
+  release:
+    name: Build, Verify, and Release
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    env:
+      PHR_ACCEPTANCE_WORK_DIRECTORY: ${{ runner.temp }}/paperhotreloader-platform-acceptance
+      PHR_ACCEPTANCE_KEEP_WORK_DIRECTORY: "true"
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Set up JDK 25
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: "25"
+          cache: gradle
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v6.2.0
+
+      - name: Run release verification
+        run: ./gradlew --no-daemon clean test acceptanceTest
+
+      - name: Resolve distribution artifact
+        run: |
+          version="$(./gradlew --quiet properties | sed -n 's/^version: //p')"
+          echo "DIST_JAR=build/libs/PaperHotReloader-$version.jar" >> "$GITHUB_ENV"
+
+      - name: Create checksum
+        run: sha256sum "${{ env.DIST_JAR }}" > "${{ env.DIST_JAR }}.sha256"
+
+      - name: Upload failing Paper acceptance logs
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: paperhotreloader-platform-acceptance-logs
+          if-no-files-found: warn
+          path: ${{ runner.temp }}/paperhotreloader-platform-acceptance/paper/paper.log
+
+      - name: Upload distribution
+        uses: actions/upload-artifact@v7
+        with:
+          name: dist
+          path: |
+            ${{ env.DIST_JAR }}
+            ${{ env.DIST_JAR }}.sha256
+
+      - name: Create GitHub release
+        uses: softprops/action-gh-release@v3
+        with:
+          name: PaperHotReloader ${{ github.ref_name }}
+          generate_release_notes: true
+          files: |
+            ${{ env.DIST_JAR }}
+            ${{ env.DIST_JAR }}.sha256
