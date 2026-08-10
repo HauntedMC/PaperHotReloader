@@ -15,6 +15,7 @@ Hot-load, unload, reload, and watch Bukkit plugins without restarting a Paper se
 - Preserve dependency order and block dependent-plugin operations unless `--force` (or `-f`) is supplied.
 - Watch plugin jars and debounce filesystem changes into reloads on the server thread.
 - Inspect plugin metadata, command ownership, and loaded plugins.
+- Use Paper's Brigadier command lifecycle so `/phr` is invisible to players without a PHR permission.
 
 ## Quick Start
 

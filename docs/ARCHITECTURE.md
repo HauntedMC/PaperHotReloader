@@ -4,8 +4,8 @@ PaperHotReloader provides a command-driven lifecycle boundary around Bukkit plug
 
 ## Components
 
-- `PaperHotReloader`: plugin bootstrap, configuration, and command registration.
-- `PhrCommand`: permission checks, parsing, operator feedback, and completion.
+- `PaperHotReloader`: plugin bootstrap, configuration, and Paper's Brigadier-backed command registration.
+- `PhrCommand`: permission checks, parsing, operator feedback, completion, and command-tree visibility.
 - `BukkitPluginLifecycleManager`: dependency ordering plus load, disable, unload, and reload operations.
 - `PluginWatchManager`: asynchronous file watching, debounce, and main-thread reload scheduling.
 - `PluginDescription`: reads `plugin.yml` metadata from jars without loading them.

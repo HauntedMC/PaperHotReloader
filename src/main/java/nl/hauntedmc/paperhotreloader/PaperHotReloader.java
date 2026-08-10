@@ -3,7 +3,8 @@ package nl.hauntedmc.paperhotreloader;
 import nl.hauntedmc.paperhotreloader.commands.PhrCommand;
 import nl.hauntedmc.paperhotreloader.managers.BukkitPluginLifecycleManager;
 import nl.hauntedmc.paperhotreloader.tasks.PluginWatchManager;
-import org.bukkit.command.PluginCommand;
+import io.papermc.paper.command.brigadier.Commands;
+import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /** Main Bukkit entrypoint for PaperHotReloader. */
@@ -18,14 +19,21 @@ public final class PaperHotReloader extends JavaPlugin {
         lifecycleManager = new BukkitPluginLifecycleManager(this);
         watchManager = new PluginWatchManager(this, lifecycleManager);
 
-        PluginCommand command = getCommand("paperhotreloader");
-        if (command == null) {
-            throw new IllegalStateException("paperhotreloader command is missing from plugin.yml");
-        }
-        PhrCommand executor = new PhrCommand(this);
-        command.setExecutor(executor);
-        command.setTabCompleter(executor);
+        registerCommands();
         getLogger().info("PaperHotReloader enabled. Use /phr help for commands.");
+    }
+
+    private void registerCommands() {
+        PhrCommand command = new PhrCommand(this);
+        getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS, event -> {
+            Commands commands = event.registrar();
+            commands.register(
+                    "paperhotreloader",
+                    "Manage Bukkit plugin lifecycles.",
+                    java.util.List.of("phr"),
+                    command
+            );
+        });
     }
 
     @Override

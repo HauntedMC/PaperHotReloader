@@ -23,6 +23,11 @@ The prefix accepts Bukkit legacy color codes. Apply a configuration change with 
 - `paperhotreloader.commandinfo`
 - `paperhotreloader.plugins`
 
+PHR registers its command through Paper's Brigadier command lifecycle. A player with none of these permissions
+does not receive `/paperhotreloader` or `/phr` in their command tree; it will not appear in completion or command
+discovery. Players with a specific node see the root and only receive suggestions and help entries for actions they
+are allowed to use.
+
 ## Operational Guidance
 
 - Keep plugin jars directly in the server `plugins/` directory when using `/phr loadplugin`.
