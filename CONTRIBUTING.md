@@ -22,7 +22,7 @@ Minimum checks:
 
 ```bash
 ./gradlew test
-bash -n src/acceptance/run-acceptance.sh
+shellcheck src/acceptance/run-acceptance.sh scripts/bump-version.sh
 ```
 
 Run the full Paper acceptance suite:

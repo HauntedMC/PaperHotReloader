@@ -30,4 +30,4 @@ jobs:
       - name: Verify build hygiene
         run: |
           ./gradlew --no-daemon check
-          bash -n src/acceptance/run-acceptance.sh
+          shellcheck src/acceptance/run-acceptance.sh scripts/bump-version.sh

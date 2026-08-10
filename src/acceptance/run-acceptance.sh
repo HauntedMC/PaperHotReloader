@@ -58,12 +58,16 @@ send_command() {
 cleanup() {
     local exit_code=$?
     if [[ -n "$paper_input_fd" ]]; then
-        printf 'stop\n' >&"$paper_input_fd" 2>/dev/null || true
+        if ! printf 'stop\n' >&"$paper_input_fd"; then
+            : # The Paper console may already have closed its FIFO.
+        fi
     fi
     if [[ -n "$paper_pid" ]]; then
         local deadline=$((SECONDS + 30))
         while kill -0 "$paper_pid" 2>/dev/null && ((SECONDS < deadline)); do sleep 1; done
-        kill -0 "$paper_pid" 2>/dev/null && kill "$paper_pid" 2>/dev/null || true
+        if kill -0 "$paper_pid" 2>/dev/null; then
+            kill "$paper_pid" 2>/dev/null || true
+        fi
         wait "$paper_pid" 2>/dev/null || true
     fi
     if [[ -f "$work_directory/paper/paper.log" && $exit_code -ne 0 ]]; then
