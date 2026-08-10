@@ -21,7 +21,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.Plugin;
 
-/** Command surface intentionally mirrors VelocityHotReloader's lifecycle workflow. */
+/** Administrative command surface for Paper plugin lifecycle operations. */
 public final class PhrCommand implements BasicCommand {
 
     private static final List<String> SUBCOMMANDS = List.of(
