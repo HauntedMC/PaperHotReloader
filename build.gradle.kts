@@ -10,7 +10,7 @@ group = "nl.hauntedmc.paperhotreloader"
 version = "1.0.3"
 
 val javaVersion = 25
-val paperApiVersion = "26.2.build.65-beta"
+val paperApiVersion = "26.2.build.112-stable"
 val acceptanceCompileClasspath by configurations.creating {
     isCanBeConsumed = false
     isCanBeResolved = true
