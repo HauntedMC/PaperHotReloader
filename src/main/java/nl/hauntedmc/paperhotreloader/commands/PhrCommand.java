@@ -290,10 +290,9 @@ public final class PhrCommand implements BasicCommand {
     @Override
     public Collection<String> suggest(CommandSourceStack stack, String[] args) {
         CommandSender sender = stack.getSender();
-        if (args.length == 1) {
-            return matching(args[0], SUBCOMMANDS.stream()
-                    .filter(subcommand -> hasPermission(sender, permissionFor(subcommand)))
-                    .toList());
+        if (args.length <= 1) {
+            String prefix = args.length == 0 ? "" : args[0];
+            return subcommandSuggestions(sender, prefix);
         }
         String subcommand = args[0].toLowerCase(Locale.ROOT);
         if (!hasPermission(sender, permissionFor(subcommand))) return List.of();
@@ -313,6 +312,12 @@ public final class PhrCommand implements BasicCommand {
         }
         if (subcommand.equals("plugins")) return matching(args[args.length - 1], List.of("-v", "--version"));
         return List.of();
+    }
+
+    static List<String> subcommandSuggestions(CommandSender sender, String prefix) {
+        return matching(prefix, SUBCOMMANDS.stream()
+                .filter(subcommand -> hasPermission(sender, permissionFor(subcommand)))
+                .toList());
     }
 
     static boolean isDiscoverableBy(CommandSender sender) {

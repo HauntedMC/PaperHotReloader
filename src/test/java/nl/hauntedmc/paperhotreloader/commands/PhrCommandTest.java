@@ -19,6 +19,18 @@ class PhrCommandTest {
     }
 
     @Test
+    void completesAuthorizedSubcommandsForAnEmptyPrefix() {
+        assertEquals(
+                List.of("help", "plugins", "restart"),
+                PhrCommand.subcommandSuggestions(senderWith(
+                        "paperhotreloader.help",
+                        "paperhotreloader.plugins",
+                        "paperhotreloader.restart"
+                ), "")
+        );
+    }
+
+    @Test
     void hidesTheRootCommandFromPlayersWithoutAnyPhrPermission() {
         assertFalse(PhrCommand.isDiscoverableBy(senderWith()));
         assertTrue(PhrCommand.isDiscoverableBy(senderWith("paperhotreloader.help")));
