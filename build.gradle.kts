@@ -7,7 +7,7 @@ plugins {
 }
 
 group = "nl.hauntedmc.paperhotreloader"
-version = "1.0.3"
+version = "1.0.4"
 
 val javaVersion = 25
 val paperApiVersion = "26.2.build.112-stable"
