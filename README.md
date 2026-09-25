@@ -1,7 +1,6 @@
 # PaperHotReloader
 
-[![CI Quality](https://github.com/HauntedMC/PaperHotReloader/actions/workflows/ci-tests-and-coverage.yml/badge.svg?branch=main)](https://github.com/HauntedMC/PaperHotReloader/actions/workflows/ci-tests-and-coverage.yml)
-[![Paper Acceptance](https://github.com/HauntedMC/PaperHotReloader/actions/workflows/ci-tests-and-coverage.yml/badge.svg?branch=main)](https://github.com/HauntedMC/PaperHotReloader/actions/workflows/ci-tests-and-coverage.yml)
+[![CI](https://github.com/HauntedMC/PaperHotReloader/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/HauntedMC/PaperHotReloader/actions/workflows/ci.yml)
 [![Latest Release](https://img.shields.io/github/v/release/HauntedMC/PaperHotReloader?sort=semver)](https://github.com/HauntedMC/PaperHotReloader/releases/latest)
 [![Java 25](https://img.shields.io/badge/Java-25-007396?logo=openjdk&logoColor=white)](https://adoptium.net/)
 [![License](https://img.shields.io/github/license/HauntedMC/PaperHotReloader)](LICENSE)
@@ -31,32 +30,17 @@ Hot-load, unload, reload, and watch Bukkit plugins without restarting a Paper se
 
 ## Build From Source
 
-Build with Java 25 and the Paper 26.2 development bundle:
+Use Java 25. HauntedPlatform is resolved from GitHub Packages; set `PACKAGES_USER` and `PACKAGES_TOKEN` (with `read:packages`) for a fresh local Maven cache. The committed `.mvn/settings.xml` reads these variables.
 
 ```bash
-./gradlew clean build
+./mvnw -B -ntp verify
 ```
 
-Output jar: `build/libs/PaperHotReloader-<version>.jar`
+Output jar: `target/PaperHotReloader-<version>.jar`
 
-## Release Workflow
+## Release workflow
 
-Create a semantic-version bump, commit, and release tag locally:
-
-```bash
-scripts/bump-version.sh patch
-```
-
-Add `--push` to publish the branch and tag after the repository is reviewed:
-
-```bash
-scripts/bump-version.sh minor --push
-```
-
-Run the fast unit suite with `./gradlew test`. `./gradlew acceptanceTest` follows the ServerFeatures
-acceptance pattern: it downloads the pinned Paper 26.2 build, starts a disposable server, builds temporary
-sample plugins, and verifies every PHR command plus dependency protection, dynamic reload, file watching,
-and PHR's own restart.
+From clean `main`, run `./tools/release/update-version patch --pr` to open a reviewed version PR. CI tests the PR; after merge, GitHub Actions publishes the Maven package, verifies that it resolves, and creates the tag and downloadable release jar with a SHA-256 checksum. See [release tooling](tools/release/README.md).
 
 ## Commands
 

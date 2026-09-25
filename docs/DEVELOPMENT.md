@@ -3,15 +3,15 @@
 ## Local Workflow
 
 ```bash
-./gradlew compileJava
-./gradlew test
-./gradlew check
+./mvnw -B -ntp -DskipTests compile
+./mvnw -B -ntp test
+./mvnw -B -ntp verify
 ```
 
 Use the platform acceptance task for changes to plugin loading, unloading, commands, or file watching:
 
 ```bash
-./gradlew acceptanceTest
+./mvnw -B -ntp -Pplatform-acceptance verify
 ```
 
 The acceptance task is intentionally isolated: it builds temporary sample plugins and boots a disposable

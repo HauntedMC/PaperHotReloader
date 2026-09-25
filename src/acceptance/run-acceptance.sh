@@ -2,10 +2,12 @@
 set -euo pipefail
 
 root_directory="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
-artifact="${PHR_ARTIFACT:-$root_directory/build/libs/PaperHotReloader-1.0.0.jar}"
-paper_api_classpath="${PHR_PAPER_API_CLASSPATH:-}"
-paper_url="https://fill-data.papermc.io/v1/objects/d290ee2a3ae92fea10afb0c74f797023d74cfd72cbcee44314e0c50d5551f2c6/paper-26.2-65.jar"
-paper_sha256="d290ee2a3ae92fea10afb0c74f797023d74cfd72cbcee44314e0c50d5551f2c6"
+artifact="${PHR_ARTIFACT:-}"
+paper_api_classpath="$(cat "${PHR_PAPER_API_CLASSPATH:?Missing classpath file}")"
+paper_version="${PHR_RUNTIME_VERSION:?Missing Paper runtime version}"
+paper_build="${PHR_RUNTIME_BUILD:?Missing Paper runtime build}"
+paper_sha256="${PHR_RUNTIME_SHA256:?Missing Paper runtime checksum}"
+paper_url="https://fill-data.papermc.io/v1/objects/$paper_sha256/paper-$paper_version-$paper_build.jar"
 work_directory="${PHR_ACCEPTANCE_WORK_DIRECTORY:-$(mktemp -d)}"
 created_work_directory="${PHR_ACCEPTANCE_WORK_DIRECTORY:+false}"
 created_work_directory="${created_work_directory:-true}"
@@ -89,11 +91,11 @@ mkdir -p "$work_directory/paper/plugins" "$work_directory/sample/classes" "$work
 
 curl --fail --silent --show-error --location --output "$work_directory/paper/paper.jar" "$paper_url"
 [[ "$(sha256sum "$work_directory/paper/paper.jar" | awk '{print $1}')" == "$paper_sha256" ]] \
-    || fail "Downloaded Paper 26.2 build 65 checksum mismatch"
+    || fail "Downloaded Paper runtime checksum mismatch"
 cp "$artifact" "$work_directory/paper/plugins/PaperHotReloader.jar"
 
 sample_source="$root_directory/src/acceptance/sample-plugin/AcceptancePlugin.java"
-javac --release 25 -cp "$paper_api_classpath" -d "$work_directory/sample/classes" "$sample_source"
+"${JAVA_HOME:?Set JAVA_HOME to JDK 25}/bin/javac" --release 25 -cp "$paper_api_classpath" -d "$work_directory/sample/classes" "$sample_source"
 
 build_sample_plugin() {
     local destination=$1 descriptor=$2 marker=$3
@@ -116,7 +118,7 @@ build_sample_plugin \
 printf '%s\n' 'eula=true' >"$work_directory/paper/eula.txt"
 printf '%s\n' 'server-port=0' 'level-type=minecraft:flat' >"$work_directory/paper/server.properties"
 mkfifo "$work_directory/paper/console.in"
-(cd "$work_directory/paper" && exec java -Xms512M -Xmx1G -jar paper.jar --nogui <console.in >paper.log 2>&1) &
+(cd "$work_directory/paper" && exec "${JAVA_HOME:?Set JAVA_HOME to JDK 25}/bin/java" -Xms512M -Xmx1G -jar paper.jar --nogui <console.in >paper.log 2>&1) &
 paper_pid=$!
 exec {paper_input_fd}>"$work_directory/paper/console.in"
 paper_log="$work_directory/paper/paper.log"
