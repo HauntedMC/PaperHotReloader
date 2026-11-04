@@ -1,7 +1,7 @@
 name: PaperHotReloader
 version: '${version}'
 main: nl.hauntedmc.paperhotreloader.PaperHotReloader
-api-version: '1.21'
+api-version: '26.3'
 authors: [remymine]
 website: https://www.hauntedmc.nl
 description: Hot-load, unload, reload, and watch Bukkit plugins.
