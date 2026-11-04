@@ -1,7 +1,7 @@
 name: PhrAcceptanceSample
 version: '${marker}'
 main: acceptance.AcceptancePlugin
-api-version: '26.2'
+api-version: '26.3'
 commands:
   acceptanceprobe:
     description: Acceptance probe command.
